@@ -12,8 +12,8 @@ const int motorB_IN3 = 21;
 const int motorB_IN4 = 19;
 
 // Ultrasonic sensor pins
-const int TRIG_PIN = 5;
-const int ECHO_PIN = 18;
+const int TRIG_PIN = 17;
+const int ECHO_PIN = 16;
 
 // Obstacle detection threshold in cm
 const int OBSTACLE_DISTANCE_CM = 20;
@@ -84,6 +84,7 @@ void rawForward() {
     digitalWrite(motorA_IN2, LOW);
     digitalWrite(motorB_IN3, HIGH);
     digitalWrite(motorB_IN4, LOW);
+    Serial.println("Moving Forward");
 }
 
 void rawTurnRight() {
@@ -212,7 +213,7 @@ class MyServerCallbacks : public BLEServerCallbacks {
 // ============================================================
 class MyCharCallbacks : public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pChar) {
-        String value = pChar->getValue();
+        String value = pChar->getValue().c_str();
         if (value.length() > 0) {
             char command = value[0];
             printSeparator();
@@ -286,12 +287,13 @@ void setup() {
 //  LOOP — Continuous forward obstacle check
 // ============================================================
 void loop() {
-    if (deviceConnected && lastCommand == 'f') {
-        long dist = getDistance();
-        if (dist <= OBSTACLE_DISTANCE_CM) {
-            Serial.println("  [LOOP] Obstacle detected while moving forward!");
-            avoidObstacle();
-        }
-    }
-    delay(100);
+    rawForward();
+    // if (deviceConnected && lastCommand == 'f') {
+    //     long dist = getDistance();
+    //     if (dist <= OBSTACLE_DISTANCE_CM) {
+    //         Serial.println("  [LOOP] Obstacle detected while moving forward!");
+    //         avoidObstacle();
+    //     }
+    // }
+    // delay(100);
 }
